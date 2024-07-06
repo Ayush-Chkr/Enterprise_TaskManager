@@ -8,6 +8,7 @@
 
 <%
     // Initialize Hibernate SessionFactory
+    //testing git
     Configuration configuration = new Configuration().configure();
     SessionFactory sessionFactory = configuration.buildSessionFactory();
 

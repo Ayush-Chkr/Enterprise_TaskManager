@@ -38,10 +38,11 @@ function checkCredentials(event) {
                 	window.location.href = "super.jsp";
                 }
                 else if(result.role === "admin"){
-					window.location.href = "admin.jsp";
+					window.location.href = "admin_dashboard.jsp";
 				}
 				else{
-					window.location.href = "employee.jsp";
+					//alert("Success 2");
+					window.location.href = "employee_dashboard.jsp";
 				}
             } else {
                 //alert("Login failed: " + result.message);

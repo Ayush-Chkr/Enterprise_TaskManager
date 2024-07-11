@@ -1,5 +1,8 @@
 <%@ page import="com.digicode.dao.LoginServiceImpl" %>
 <%@ page import="com.digicode.model.EmployeeModel" %>
+<%@ page import="com.digicode.model.TicketsModel" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page import="javax.servlet.http.Cookie" %>
 <%@ page import="javax.servlet.http.HttpServletRequest" %>
 <%
@@ -19,188 +22,103 @@
     
     LoginServiceImpl loginService = new LoginServiceImpl();
     EmployeeModel user = loginService.getUserById(username);
+    String position = user != null ? user.getPosition() : "user";
+    
+    // Fetch unread tickets for notifications
+    List<TicketsModel> unreadTickets = loginService.getUnreadTicketsByAssignee(username);
 %>
 
-
 <nav class="navbar navbar-expand navbar-light navbar-bg">
-	<a class="sidebar-toggle js-sidebar-toggle"> <i
-		class="hamburger align-self-center"></i>
-	</a>
+    <a class="sidebar-toggle js-sidebar-toggle">
+        <i class="hamburger align-self-center"></i>
+    </a>
 
-	<div class="navbar-collapse collapse">
-		<ul class="navbar-nav navbar-align">
-			<li>
-				 <select id="plant"
-				class="form-control browser-default custom-select">
-				<option value="global">Global</option>
-					<option value="Plant1">Plant1</option>
-					<option value="Plant2">Plant2</option>
-					<option value="Plant3">Plant3</option>
-			</select>
-			</li>
-			<li class="nav-item dropdown"><a
-				class="nav-icon dropdown-toggle" href="#" id="alertsDropdown"
-				data-bs-toggle="dropdown">
-					<div class="position-relative">
-						<i class="align-middle" data-feather="bell"></i> <span
-							class="indicator">4</span>
-					</div>
-			</a>
-				<div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0"
-					aria-labelledby="alertsDropdown">
-					<div class="dropdown-menu-header">4 New Notifications</div>
-					<div class="list-group">
-						<a href="#" class="list-group-item">
-							<div class="row g-0 align-items-center">
-								<div class="col-2">
-									<i class="text-danger" data-feather="alert-circle"></i>
-								</div>
-								<div class="col-10">
-									<div class="text-dark">Update completed</div>
-									<div class="text-muted small mt-1">Restart server 12 to
-										complete the update.</div>
-									<div class="text-muted small mt-1">30m ago</div>
-								</div>
-							</div>
-						</a> <a href="#" class="list-group-item">
-							<div class="row g-0 align-items-center">
-								<div class="col-2">
-									<i class="text-warning" data-feather="bell"></i>
-								</div>
-								<div class="col-10">
-									<div class="text-dark">Lorem ipsum</div>
-									<div class="text-muted small mt-1">Aliquam ex eros,
-										imperdiet vulputate hendrerit et.</div>
-									<div class="text-muted small mt-1">2h ago</div>
-								</div>
-							</div>
-						</a> <a href="#" class="list-group-item">
-							<div class="row g-0 align-items-center">
-								<div class="col-2">
-									<i class="text-primary" data-feather="home"></i>
-								</div>
-								<div class="col-10">
-									<div class="text-dark">Login from 192.186.1.8</div>
-									<div class="text-muted small mt-1">5h ago</div>
-								</div>
-							</div>
-						</a> <a href="#" class="list-group-item">
-							<div class="row g-0 align-items-center">
-								<div class="col-2">
-									<i class="text-success" data-feather="user-plus"></i>
-								</div>
-								<div class="col-10">
-									<div class="text-dark">New connection</div>
-									<div class="text-muted small mt-1">Christina accepted
-										your request.</div>
-									<div class="text-muted small mt-1">14h ago</div>
-								</div>
-							</div>
-						</a>
-					</div>
-					<div class="dropdown-menu-footer">
-						<a href="#" class="text-muted">Show all notifications</a>
-					</div>
-				</div></li>
-			<li class="nav-item dropdown"><a
-				class="nav-icon dropdown-toggle" href="#" id="messagesDropdown"
-				data-bs-toggle="dropdown">
-					<div class="position-relative">
-						<i class="align-middle" data-feather="message-square"></i>
-					</div>
-			</a>
-				<div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0"
-					aria-labelledby="messagesDropdown">
-					<div class="dropdown-menu-header">
-						<div class="position-relative">4 New Messages</div>
-					</div>
-					<div class="list-group">
-						<a href="#" class="list-group-item">
-							<div class="row g-0 align-items-center">
-								<div class="col-2">
-									<img src="img/avatars/avatar-5.jpg"
-										class="avatar img-fluid rounded-circle" alt="Vanessa Tucker">
-								</div>
-								<div class="col-10 ps-2">
-									<div class="text-dark">Vanessa Tucker</div>
-									<div class="text-muted small mt-1">Nam pretium turpis et
-										arcu. Duis arcu tortor.</div>
-									<div class="text-muted small mt-1">15m ago</div>
-								</div>
-							</div>
-						</a> <a href="#" class="list-group-item">
-							<div class="row g-0 align-items-center">
-								<div class="col-2">
-									<img src="img/avatars/avatar-2.jpg"
-										class="avatar img-fluid rounded-circle" alt="William Harris">
-								</div>
-								<div class="col-10 ps-2">
-									<div class="text-dark">William Harris</div>
-									<div class="text-muted small mt-1">Curabitur ligula
-										sapien euismod vitae.</div>
-									<div class="text-muted small mt-1">2h ago</div>
-								</div>
-							</div>
-						</a> <a href="#" class="list-group-item">
-							<div class="row g-0 align-items-center">
-								<div class="col-2">
-									<img src="img/avatars/avatar-4.jpg"
-										class="avatar img-fluid rounded-circle" alt="Christina Mason">
-								</div>
-								<div class="col-10 ps-2">
-									<div class="text-dark">Christina Mason</div>
-									<div class="text-muted small mt-1">Pellentesque auctor
-										neque nec urna.</div>
-									<div class="text-muted small mt-1">4h ago</div>
-								</div>
-							</div>
-						</a> <a href="#" class="list-group-item">
-							<div class="row g-0 align-items-center">
-								<div class="col-2">
-									<img src="img/avatars/avatar-3.jpg"
-										class="avatar img-fluid rounded-circle" alt="Sharon Lessman">
-								</div>
-								<div class="col-10 ps-2">
-									<div class="text-dark">Sharon Lessman</div>
-									<div class="text-muted small mt-1">Aenean tellus metus,
-										bibendum sed, posuere ac, mattis non.</div>
-									<div class="text-muted small mt-1">5h ago</div>
-								</div>
-							</div>
-						</a>
-					</div>
-					<div class="dropdown-menu-footer">
-						<a href="#" class="text-muted">Show all messages</a>
-					</div>
-				</div></li>
-			<li class="nav-item dropdown"><a
-				class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#"
-				data-bs-toggle="dropdown"> <i class="align-middle"
-					data-feather="settings"></i>
-			</a> <a class="nav-link dropdown-toggle d-none d-sm-inline-block"
-				href="#" data-bs-toggle="dropdown"> <!--  <img
-					src="img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1"
-					alt="Charles Hall" />  --> <span class="text-dark">Hi <%= user != null ? user.getFirstName() : "Guest" %></span>
-			</a>
-				<div class="dropdown-menu dropdown-menu-end">
-					<a class="dropdown-item" href="profile.jsp"><i
-						class="align-middle me-1" data-feather="user"></i> Profile</a> <a
-						class="dropdown-item" href="#"><i class="align-middle me-1"
-						data-feather="pie-chart"></i> Analytics</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" href="index.html"><i
-						class="align-middle me-1" data-feather="settings"></i> Settings &
-						Privacy</a> <a class="dropdown-item" href="#"><i
-						class="align-middle me-1" data-feather="help-circle"></i> Help
-						Center</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" href="logout1">Log out</a>
-				</div></li>
-		</ul>
-	</div>
+    <div class="navbar-collapse collapse">
+        <ul class="navbar-nav navbar-align">
+            <%-- Conditionally display "Plant" dropdown for super_admin --%>
+            <% if ("super_admin".equals(position)) { %>
+                <li>
+                    <select id="plant" class="form-control browser-default custom-select">
+                        <option value="global">Global</option>
+                        <option value="Plant1">Plant1</option>
+                        <option value="Plant2">Plant2</option>
+                        <option value="Plant3">Plant3</option>
+                    </select>
+                </li>
+            <% } %>
+
+            <!-- Notifications dropdown -->
+            <li class="nav-item dropdown">
+                <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
+                    <div class="position-relative">
+                        <i class="align-middle" data-feather="bell"></i>
+                        <span class="indicator"><%= unreadTickets.size() %></span>
+                    </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="alertsDropdown">
+                    <div class="dropdown-menu-header"><%= unreadTickets.size() %> New Notifications</div>
+                    <div class="list-group">
+                        <% for (TicketsModel ticket : unreadTickets) { %>
+                            <a href="#" class="list-group-item mark-as-read" data-ticket-id="<%= ticket.getId() %>">
+                                <div class="row g-0 align-items-center">
+                                    <div class="col-2">
+                                        <i class="text-danger" data-feather="alert-circle"></i>
+                                    </div>
+                                    <div class="col-10">
+                                        <div class="text-dark"><%= ticket.getTicketName() %></div>
+                                        <div class="text-muted small mt-1"><%= ticket.getTicketDescription() %></div>
+                                        <div class="text-muted small mt-1">Created <%= ticket.getCreatedAt() %></div>
+                                    </div>
+                                </div>
+                            </a>
+                        <% } %>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Other navigation items -->
+            <li class="nav-item dropdown">
+                <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
+                    <i class="align-middle" data-feather="settings"></i>
+                </a>
+                <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
+                    <span class="text-dark">Hi <%= user != null ? user.getFirstName() : "Guest" %></span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end">
+                    <a class="dropdown-item" href="profile.jsp"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="logout1">Log out</a>
+                </div>
+            </li>
+        </ul>
+    </div>
 </nav>
-<!-- Bootstrap CSS -->
-<link href="path/to/bootstrap.min.css" rel="stylesheet">
-<!-- Bootstrap Bundle with Popper --><!-- 
-<script src="path/to/bootstrap.bundle.min.js"></script>
- -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const alertsDropdown = document.getElementById("alertsDropdown");
+
+    if (alertsDropdown) {
+        alertsDropdown.addEventListener("click", function() {
+            const username = "<%= username %>";
+
+            fetch("MarkNotificationsReadServlet", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams({username: username})
+            })
+            .then(response => response.text())
+            .then(result => {
+                if (result === "success") {
+                    console.log("Notifications marked as read.");
+                } else {
+                    console.log("Failed to mark notifications as read.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    }
+});
+</script>

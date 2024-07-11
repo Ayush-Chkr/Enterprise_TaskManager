@@ -19,11 +19,12 @@ public class LoginServiceImpl {
 	
     Configuration configuration = new Configuration().configure();
     SessionFactory sessionFactory = configuration.buildSessionFactory();
+    Session session = null;
+    Transaction transaction = null;
 
     public boolean chkcredentials(String user, String pass) {
         boolean res = false;
-        Session session = null;
-        Transaction transaction = null;
+        
         
         try {
             session = sessionFactory.openSession();
@@ -55,7 +56,7 @@ public class LoginServiceImpl {
     }
     
     public EmployeeModel getUserById(String userId) {
-        Session session = null;
+       
         EmployeeModel user = null;
         try {
             session = sessionFactory.openSession();
@@ -82,8 +83,7 @@ public class LoginServiceImpl {
     @SuppressWarnings("unchecked")
     public List<EmployeeModel> listAllEmployee() {
         List<EmployeeModel> usrModelObj = new ArrayList<>();
-        Session session = null;
-        Transaction transaction = null;
+       
         try {
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
@@ -102,8 +102,7 @@ public class LoginServiceImpl {
     @SuppressWarnings("unchecked")
     public List<TicketsModel> listAllTasks() {
         List<TicketsModel> taskModelObj = new ArrayList<>();
-        Session session = null;
-        Transaction transaction = null;
+       
         try {
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
@@ -126,8 +125,7 @@ public class LoginServiceImpl {
 	@SuppressWarnings("unchecked")
 	public List<EmployeeModel> listEmployeesByAdmin(String adminId) {
 		List<EmployeeModel> usrModelObj = new ArrayList<>();
-        Session session = null;
-        Transaction transaction = null;
+       
         try {
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
@@ -143,6 +141,166 @@ public class LoginServiceImpl {
         }
         return usrModelObj;
 	}
+	public boolean updateUser(EmployeeModel user) {
+	   
+	    try {
+	        session = sessionFactory.openSession();
+	        Transaction transaction = session.beginTransaction();
+
+	        EmployeeModel existingUser = (EmployeeModel) session.get(EmployeeModel.class, user.getUserId());
+
+	        if (existingUser != null) {
+	            updateFields(existingUser, user); // Update only non-null fields
+
+	            session.update(existingUser); // Update the entity in the session
+
+	            transaction.commit();
+	            return true;
+	        } else {
+	            // Handle case where user doesn't exist
+	            return false;
+	        }
+	    } catch (HibernateException e) {
+	        if (session != null && session.getTransaction() != null) {
+	            session.getTransaction().rollback();
+	        }
+	        e.printStackTrace();
+	        return false;
+	    } finally {
+	        if (session != null) {
+	            session.close(); // Close the session in finally block
+	        }
+	    }
+	}
+
+	private void updateFields(EmployeeModel existingUser, EmployeeModel newUser) {
+	    if (newUser.getFirstName() != null && !newUser.getFirstName().isEmpty()) {
+	        existingUser.setFirstName(newUser.getFirstName());
+	    }
+	    if (newUser.getLastName() != null && !newUser.getLastName().isEmpty()) {
+	        existingUser.setLastName(newUser.getLastName());
+	    }
+	    if (newUser.getEmail() != null && !newUser.getEmail().isEmpty()) {
+	        existingUser.setEmail(newUser.getEmail());
+	    }
+	    if (newUser.getContact_no() != null && !newUser.getContact_no().isEmpty()) {
+	        existingUser.setContact_no(newUser.getContact_no());
+	    }
+	    if (newUser.getAddress() != null && !newUser.getAddress().isEmpty()) {
+	        existingUser.setAddress(newUser.getAddress());
+	    }
+	    if (newUser.getCity() != null && !newUser.getCity().isEmpty()) {
+	        existingUser.setCity(newUser.getCity());
+	    }
+	    if (newUser.getState() != null && !newUser.getState().isEmpty()) {
+	        existingUser.setState(newUser.getState());
+	    }
+	    if (newUser.getCountry() != null && !newUser.getCountry().isEmpty()) {
+	        existingUser.setCountry(newUser.getCountry());
+	    }
+	    if (newUser.getPin() != null && !newUser.getPin().isEmpty()) {
+	        existingUser.setPin(newUser.getPin());
+	    }
+	    if (newUser.getPassword() != null && !newUser.getPassword().isEmpty()) {
+	        existingUser.setPassword(newUser.getPassword());
+	    }
+	    // Add more fields as needed
+	}
+
+	public boolean updatePassword(String userId, String newPassword) {
+	   
+	    try {
+	        session = sessionFactory.openSession();
+	        Transaction transaction = session.beginTransaction();
+
+	        EmployeeModel existingUser = (EmployeeModel) session.get(EmployeeModel.class, userId);
+
+	        if (existingUser != null) {
+	            existingUser.setPassword(newPassword); // Update the password
+
+	            session.update(existingUser); // Update the entity in the session
+
+	            transaction.commit();
+	            return true;
+	        } else {
+	            // Handle case where user doesn't exist
+	            return false;
+	        }
+	    } catch (HibernateException e) {
+	        if (session != null && session.getTransaction() != null) {
+	            session.getTransaction().rollback();
+	        }
+	        e.printStackTrace();
+	        return false;
+	    } finally {
+	        if (session != null) {
+	            session.close(); // Close the session in finally block
+	        }
+	    }
+	}
+	public int countTransfersByUser(String assignee) {
+	    
+	    try {
+	        session = sessionFactory.openSession();
+	        Long count = (Long) session.createQuery("select count(*) from TicketLogs where createdBy = :assignee")
+	                                  .setParameter("assignee", assignee)
+	                                  .uniqueResult();
+	        return count != null ? count.intValue() : 0;
+	    } catch (HibernateException e) {
+	        e.printStackTrace();
+	        return 0;
+	    } finally {
+	        if (session != null) {
+	            session.close();
+	        }
+	    }
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<TicketsModel> getUnreadTicketsByAssignee(String assignee) {
+	    List<TicketsModel> unreadTickets = new ArrayList<>();
+	    try {
+	        session = sessionFactory.openSession();
+	        transaction = session.beginTransaction();
+	        Query query = session.createQuery("from TicketsModel where assignee = :assignee and checkRead = false");
+	        query.setParameter("assignee", assignee);
+	        unreadTickets = query.list();
+	    } catch (HibernateException e) {
+	        if (transaction != null) {
+	            transaction.rollback();
+	        }
+	        e.printStackTrace();
+	    } finally {
+	        if (session != null) {
+	            session.close();
+	        }
+	    }
+	    return unreadTickets;
+	}
+
+	public void markAllTicketsAsRead(String assignee) {
+	    try {
+	        session = sessionFactory.openSession();
+	        transaction = session.beginTransaction();
+	        
+	        Query query = session.createQuery("update TicketsModel set checkRead = true where assignee = :assignee and checkRead = false");
+	        query.setParameter("assignee", assignee);
+	        int rowsUpdated = query.executeUpdate();
+	        
+	        transaction.commit();
+	        System.out.println(rowsUpdated + " tickets marked as read for assignee: " + assignee);
+	    } catch (HibernateException e) {
+	        if (transaction != null) {
+	            transaction.rollback();
+	        }
+	        e.printStackTrace();
+	    } finally {
+	        if (session != null) {
+	            session.close();
+	        }
+	    }
+	}
+
 }
 
 

@@ -50,9 +50,19 @@ public class TicketsModel implements Serializable {
     @Column(name = "manager")
     private String manager;
 
+    @Column(name = "Due_Date")
+    private Date dueDate;
+
+    @Column(name = "CompletedAt")
+    private Date completedAt;
+
+    @Column(name = "check_read", columnDefinition = "boolean default false")
+    private Boolean checkRead = false;
+
     // One-to-many relationship with TicketLogs
-    @OneToMany(mappedBy = "ticketModel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<TicketLogs> ticketLogList = new ArrayList<>();
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TicketLogs> ticketLogs = new ArrayList<>();
+
 
     // Many-to-one relationship with TaskSubgroupModel
     @ManyToOne(fetch = FetchType.LAZY)
@@ -161,13 +171,37 @@ public class TicketsModel implements Serializable {
     public void setManager(String manager) {
         this.manager = manager;
     }
+    
+    public Date getDueDate() {
+        return dueDate;
+    }
 
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public Date getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(Date completedAt) {
+        this.completedAt = completedAt;
+    }
+
+    public Boolean getCheckRead() {
+        return checkRead;
+    }
+
+    public void setCheckRead(Boolean checkRead) {
+        this.checkRead = checkRead;
+    }
+    
     public List<TicketLogs> getTicketLogList() {
-        return ticketLogList;
+        return ticketLogs;
     }
 
     public void setTicketLogList(List<TicketLogs> ticketLogList) {
-        this.ticketLogList = ticketLogList;
+        this.ticketLogs = ticketLogList;
     }
 
     public TaskSubgroupModel getTaskSubgroup() {

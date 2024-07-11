@@ -284,6 +284,7 @@ public class LoginServiceImpl {
 	        transaction = session.beginTransaction();
 	        
 	        Query query = session.createQuery("update TicketsModel set checkRead = true where assignee = :assignee and checkRead = false");
+	        System.out.println("USERNAME:"+assignee);
 	        query.setParameter("assignee", assignee);
 	        int rowsUpdated = query.executeUpdate();
 	        

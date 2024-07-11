@@ -101,6 +101,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (alertsDropdown) {
         alertsDropdown.addEventListener("click", function() {
             const username = "<%= username %>";
+          
 
             fetch("MarkNotificationsReadServlet", {
                 method: "POST",
@@ -111,6 +112,7 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .then(response => response.text())
             .then(result => {
+                
                 if (result === "success") {
                     console.log("Notifications marked as read.");
                 } else {
@@ -122,3 +124,4 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 </script>
+

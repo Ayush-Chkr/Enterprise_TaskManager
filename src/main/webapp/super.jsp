@@ -23,14 +23,7 @@
     List<TicketsModel> assignedTickets2= new ArrayList<>();
     List<TicketsModel> assignedTickets3 = new ArrayList<>();
     List<TicketsModel> toShow = new ArrayList<>();
-    Long highSeverityCount = 0L;
-    Long mediumSeverityCount = 0L;
-    Long lowSeverityCount = 0L;
-    Long completedCount = 0L;
-    Long logCount = 0L; // To count the number of logs created by the user
-    Long totalTicketsCount = 0L; // To count the total number of tickets
-    Long pendingTicketsCount = 0L; // To count the number of pending tickets
-    int flag=0;
+   
 
     try {
         transaction = hibernateSession.beginTransaction();
@@ -52,30 +45,11 @@
         toShow= assignedTickets;
         query = hibernateSession.createQuery("FROM TicketsModel WHERE created_by= 'super_admin' AND status !='Completed' AND employee_id= 'A1001' ");
         assignedTickets1 = query.list();
-        if(flag==1){
-        	toShow= assignedTickets1;
-        }
         query = hibernateSession.createQuery("FROM TicketsModel WHERE created_by= 'super_admin' AND status !='Completed' AND employee_id= 'A1002' ");
         assignedTickets2 = query.list();
         query = hibernateSession.createQuery("FROM TicketsModel WHERE created_by= 'super_admin' AND status !='Completed' AND employee_id= 'A1003' ");
         assignedTickets3 = query.list();
 
-        // Query count of tickets by severity
-        highSeverityCount = (Long) hibernateSession.createQuery("SELECT COUNT(*) FROM TicketsModel WHERE severity = 'High' AND status != 'Completed' ").uniqueResult();
-        mediumSeverityCount = (Long) hibernateSession.createQuery("SELECT COUNT(*) FROM TicketsModel WHERE severity = 'Medium' AND status != 'Completed'").uniqueResult();
-        lowSeverityCount = (Long) hibernateSession.createQuery("SELECT COUNT(*) FROM TicketsModel WHERE severity = 'Low' AND status != 'Completed'").uniqueResult();
-        completedCount = (Long) hibernateSession.createQuery("SELECT COUNT(*) FROM TicketsModel WHERE status = 'Completed' AND created_by = 'Super_Admin'").uniqueResult();
-		
-		
-		 // Query number of logs created by the user
-        //logCount = (Long) hibernateSession.createQuery("SELECT COUNT(*) FROM TicketLogs WHERE createdBy = :username").setParameter("username", username).uniqueResult();
-
-        // Query total tickets count
-        totalTicketsCount = (Long) hibernateSession.createQuery("SELECT COUNT(*) FROM TicketsModel WHERE created_by = 'Super_Admin'").uniqueResult();
-
-        // Query pending tickets count
-        pendingTicketsCount = (Long) hibernateSession.createQuery("SELECT COUNT(*) FROM TicketsModel WHERE status != 'Completed' AND created_by = 'Super_Admin'").uniqueResult();
-        
         transaction.commit();
     } catch (Exception e) {
         if (transaction != null) {
@@ -107,6 +81,7 @@
     <link href="./assets/css/app.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="./assets/css/ed.css" rel="stylesheet">
     <style>
         .card-equal-height {
             height: 100%;
@@ -197,7 +172,7 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex-grow-1">
-                                            <h3 class="mb-2"><%= completedCount %></h3>
+                                            <h3 class="mb-2" id="completedCount"></h3>
                                             <p class="mb-0">Completed</p>
                                         </div>
                                         <div class="flex-shrink-0">
@@ -212,7 +187,7 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex-grow-1">
-                                            <h3 class="mb-2"><%= pendingTicketsCount %></h3>
+                                            <h3 class="mb-2" id="pendingTicketsCount"></h3>
                                             <p class="mb-0">Pending Tasks</p>
                                         </div>
                                         <div class="flex-shrink-0">
@@ -228,7 +203,7 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex-grow-1">
-                                            <h3 class="mb-2"><%= totalTicketsCount %></h3>
+                                            <h3 class="mb-2" id="totalTicketsCount"></h3>
                                             <p class="mb-0">Total</p>
                                         </div>
                                         <div class="flex-shrink-0">
@@ -244,7 +219,7 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex-grow-1">
-                                            <h3 class="mb-2">0</h3>
+                                            <h3 class="mb-2" id="transferredTicketsCount">0</h3>
                                             <p class="mb-0">Tickets Transfered</p>
                                         </div>
                                         <div class="flex-shrink-0">
@@ -259,7 +234,7 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex-grow-1">
-                                            <h3 class="mb-2"><%= highSeverityCount %></h3>
+                                            <h3 class="mb-2" id="highSeverityCount"></h3>
                                             <p class="mb-0">High Severity</p>
                                         </div>
                                         <div class="flex-shrink-0">
@@ -274,7 +249,7 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex-grow-1">
-                                            <h3 class="mb-2"><%= mediumSeverityCount %></h3>
+                                            <h3 class="mb-2" id="mediumSeverityCount"></h3>
                                             <p class="mb-0">Medium Severity</p>
                                         </div>
                                         <div class="flex-shrink-0">
@@ -289,7 +264,7 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex-grow-1">
-                                            <h3 class="mb-2"><%= lowSeverityCount %></h3>
+                                            <h3 class="mb-2" id="lowSeverityCount"></h3>
                                             <p class="mb-0">Low Severity</p>
                                         </div>
                                         <div class="flex-shrink-0">
@@ -408,133 +383,17 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
     <script src="./assets/js/app.js"></script>
+    <script src="./assets/js/dashboard.js"></script>
     <script>
-   
-    document.addEventListener("DOMContentLoaded", function() {
-    	
-    	$('#plant').val('global');
+    $(document).ready(function() {
+        // Set the value of the dropdown to 'global'
+      //  $('#plant').val('global');
 
-        // Trigger change event manually
-        $('#plant').trigger('change');
-    	var dataset;
-    	var chartInstance; // Store the chart instance
-    	
-    	$('#plant').change(function() {
-            var selectedPlant = $(this).val();
-            console.log('Selected Plant:', selectedPlant); // For testing in console
-            // Perform actions based on selected plant value
-            
-            if(selectedPlant === "Plant1"){
-            	flag=1;
-            	plotChart(dataset["Plant 1"], null, null);
-            	
-            }
-            else if(selectedPlant === "Plant2"){
-            	flag=2;
-            	plotChart(null,dataset["Plant 2"], null);
-            }
-			else if(selectedPlant === "Plant3"){
-				flag=3;
-				plotChart(null,null,dataset["Plant 3"]);
-            }
-			else if(selectedPlant === "global"){
-				flag=0;
-				plotChart(dataset["Plant 1"],dataset["Plant 2"],dataset["Plant 3"]);
-			}
-        });
-    	
-		$.ajax({
-		    url: 'fetchChartData', 
-		    type: 'GET', 
-		    dataType: 'json', 
-		    success: function(response) {
-		    	dataset= response;
-		    	var plant1Data = response["Plant 1"];
-	            var plant2Data = response["Plant 2"];
-	            var plant3Data = response["Plant 3"];
-	            console.log("Plant 1 Data: ", plant1Data);
-	            console.log("Plant 2 Data: ", plant2Data);
-	            console.log("Plant 3 Data: ", plant3Data);
-	            plotChart(plant1Data, plant2Data, plant3Data);
-	            
-		    },
-		    error: function(xhr, status, error) {
-		    	alert('Error: ' + status + ' - ' + error);
-		        console.error('Error:', status, error);
-		    }
-		});
-		// Line chart
-		function plotChart(plant1Data, plant2Data, plant3Data){
-			if (chartInstance) {
-	            chartInstance.destroy();
-	        }
-			
-			chartInstance = new Chart(document.getElementById("chartjs-line"), {
-			type: "line",
-			data: {
-				labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-				datasets: [{
-					label: "Plant 1",
-					fill: true,
-					backgroundColor: "transparent",
-					borderColor: window.theme.success,
-					data: plant1Data
-				}, {
-					label: "Plant 2",
-					fill: true,
-					backgroundColor: "transparent",
-					borderColor: window.theme.danger,
-					borderDash: [4, 0],
-					data: plant2Data
-				},{
-					label: "Plant 3",
-					fill: true,
-					backgroundColor: "transparent",
-					borderColor: window.theme.primary,
-					borderDash: [4, 0],
-					data: plant3Data
-				}]
-			},
-			options: {
-				maintainAspectRatio: false,
-				legend: {
-					display: false
-				},
-				tooltips: {
-					intersect: false
-				},
-				hover: {
-					intersect: true
-				},
-				plugins: {
-					filler: {
-						propagate: false
-					}
-				},
-				scales: {
-					xAxes: [{
-						reverse: true,
-						gridLines: {
-							color: "rgba(0,0,0,0.05)"
-						}
-					}],
-					yAxes: [{
-						ticks: {
-							stepSize: 500
-						},
-						display: true,
-						borderDash: [5, 5],
-						gridLines: {
-							color: "rgba(0,0,0,0)",
-							fontColor: "#fff"
-						}
-					}]
-				}
-			}
-		});
-		}
-		
-	});	
+        // Trigger the change event manually
+      //  $('#plant').trigger('change');
+    });
+    
+   
     
 		document.addEventListener("DOMContentLoaded", function() {
 			// Pie chart

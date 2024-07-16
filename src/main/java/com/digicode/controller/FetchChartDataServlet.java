@@ -60,7 +60,7 @@ public class FetchChartDataServlet extends HttpServlet {
 
             for (int month = 0; month < 12; month++) {
                 Query query = session.createQuery(
-                    "SELECT COUNT(*) FROM TicketsModel WHERE created_by = 'Super_Admin' AND MONTH(created_at) =:month and employee_id =:admin");
+                    "SELECT COUNT(*) FROM TicketsModel WHERE created_by = 'Super_Admin' AND MONTH(created_at) =:month and assignee =:admin");
                 query.setParameter("admin", plant_admin_id);
                 query.setParameter("month", month + 1);
                 Long count = (Long) query.uniqueResult();

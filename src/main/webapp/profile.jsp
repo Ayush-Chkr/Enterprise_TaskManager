@@ -592,7 +592,7 @@ body {
 					</div>
 
 
-					<!-- Edit Modal -->
+					
 					<!-- Edit Modal -->
 					<div id="editModal" class="modal">
 						<div class="modal-content">
@@ -771,11 +771,9 @@ body {
 
 				</div>
 			</div>
-			
-			
-			
-			
-			<script>
+</div>
+</div>			
+<script>
 			
 			var url = "http://localhost:8080/v1";
 			

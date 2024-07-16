@@ -40,9 +40,9 @@
                 <li>
                     <select id="plant" class="form-control browser-default custom-select">
                         <option value="global">Global</option>
-                        <option value="Plant1">Plant1</option>
-                        <option value="Plant2">Plant2</option>
-                        <option value="Plant3">Plant3</option>
+                        <option value="Plant 1">Plant1</option>
+                        <option value="Plant 2">Plant2</option>
+                        <option value="Plant 3">Plant3</option>
                     </select>
                 </li>
             <% } %>

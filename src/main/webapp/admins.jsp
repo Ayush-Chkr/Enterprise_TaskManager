@@ -308,25 +308,26 @@ div.dt-button-collection h3.not-top-heading {
             });
         });
         
-        new DataTable(
-				'#example',
-				{
-					layout : {
-						topStart : {
-							buttons : [ {
-								extend : 'collection',
-								className : 'custom-html-collection',
-								buttons : [
-										'<h3>Export</h3>',
-										'pdf',
-										'csv',
-										'excel',
-										'<h3 class="not-top-heading">Column Visibility</h3>',
-										'columnsToggle' ]
-							} ]
-						}
-					}
-				});
+     // Initialize DataTable with separate buttons for Export and Column Visibility
+        var table = $('#example').DataTable({
+            buttons: [
+                {
+                    extend: 'collection',
+                    text: 'Export <i class="fa fa-caret-down" aria-hidden="true"></i>',
+                    buttons: [
+                        'pdf',
+                        'csv',
+                        'excel'
+                    ]
+                },
+                {
+                    extend: 'collection',
+                    text: 'Column Visibility <i class="fa fa-caret-down" aria-hidden="true"></i>',
+                    buttons: ['columnsToggle']
+                }
+            ],
+            dom: 'Bfrtip' // Display buttons
+        });
 		/* new DataTable(
 				'#employeeTable',
 				{	

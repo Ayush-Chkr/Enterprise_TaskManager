@@ -13,8 +13,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.text.ParseException;
 
 @WebServlet("/CreateTaskServlet")
 public class CreateTaskServlet extends HttpServlet {
@@ -38,21 +40,41 @@ public class CreateTaskServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Process form data
+    	
+    	Session hibernateSession = sessionFactory.openSession();
+    	Transaction transaction = null;
+    	
         String groupName = request.getParameter("groupName");
         String subgroupName = request.getParameter("subgroupName");
         String ticketName = request.getParameter("ticketName");
-        String ticketDescription = request.getParameter("ticketDescription");
         String dueDateStr = request.getParameter("dueDate");
         String severity = request.getParameter("severity");
         String assignedToId = request.getParameter("assignedTo");
 
         // Parse due date
-        LocalDateTime dueDate = LocalDateTime.parse(dueDateStr + "T00:00:00"); // Adjust if needed
-
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        java.sql.Date sqlDate = null;
+        
+        try {
+            // Parse the date string to java.util.Date
+            Date utilDate = sdf.parse(dueDateStr);
+            
+            // Convert java.util.Date to java.sql.Date
+            sqlDate = new java.sql.Date(utilDate.getTime());
+            
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+       
+        org.hibernate.Query query = hibernateSession.createQuery("FROM TicketsModel WHERE ticket_name= :tname and assignee is null ");
+        query.setParameter("tname", ticketName);
+        TicketsModel default_ticket = (TicketsModel) query.uniqueResult();
+        		
+        
         // Prepare task object
         TicketsModel task = new TicketsModel();
-        task.setTicketName(ticketName);
-        task.setTicketDescription(ticketDescription);
+        task.setTicketName(default_ticket.getTicketName());
+        task.setTicketDescription(default_ticket.getTicketDescription());
         task.setCreatedAt(new Date());
         task.setUpdatedAt(new Date());
         task.setCreatedBy("Super_Admin");
@@ -60,26 +82,13 @@ public class CreateTaskServlet extends HttpServlet {
         task.setManager("Super_Admin");
         task.setSeverity(severity);
         task.setStatus("pending");
+        task.setAssignee(assignedToId);
+        task.setDueDate(sqlDate);
         
-        // Set status, remark, and subgroup to defaults as needed
-
-        // Retrieve assigned employee
-        // Implement fetching employee from database based on assignedToId
-        // Example:
-        // EmployeeService employeeService = new EmployeeService();
-        // EmployeeModel assignedTo = employeeService.getEmployeeById(assignedToId);
-        // task.setEmployee(assignedTo);
-
-        // Retrieve subgroup
-        // Implement fetching subgroup from database based on subgroupName
-        // Example:
-        // SubgroupService subgroupService = new SubgroupService();
-        // Subgroup subgroup = subgroupService.getSubgroupByGroupNameAndSubgroupName(groupName, subgroupName);
-        // task.setSubgroup(subgroup);
 
         // Persist task using Hibernate
         Session session = sessionFactory.openSession();
-        Transaction transaction = null;
+        
         try {
             transaction = session.beginTransaction();
             session.save(task);

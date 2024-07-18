@@ -81,7 +81,7 @@
     <link href="./assets/css/app.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="./assets/css/ed.css" rel="stylesheet">
+    <link href="./assets/css/ed.css" rel="stylesheet"> 
     <style>
         .card-equal-height {
             height: 100%;
@@ -286,9 +286,42 @@
 										<canvas id="chartjs-line"></canvas>
 									</div>
 								</div>
+								
+							</div>
+							<div class="card flex-fill w-100 no-hover">
+								<!-- Pending Tickets -->
+								<div class="card-header">
+                                    <h5 class="card-title">Pending Tickets</h5>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-hover my-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Ticket Name</th>
+                                                <th class="d-none d-xl-table-cell">Ticket Id</th>
+                                                <th>Severity</th>
+                                                <th class="d-none d-md-table-cell">Remarks </th>
+                                                <th class="d-none d-md-table-cell">Assigned By</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% for (TicketsModel ticket : toShow) { %>
+                                                <tr>
+                                                    <td><%= ticket.getTicketName() %></td>
+                                                    <td class="d-none d-xl-table-cell"><%= ticket.getId() %></td>
+                                                    <td><span class="badge bg-danger"><%= ticket.getSeverity() %></span></td>
+                                                    <td class="d-none d-md-table-cell"><%= ticket.getRemark() %></td>
+                                                    <td class="d-none d-md-table-cell"><%= ticket.getCreatedBy() %></td>
+                                                </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
+                                </div>
+							
 							</div>
 						 
-						</div>
+					</div>
 						<div class="row">
 						<div class="col-12 col-md-6 col-xxl-3 d-flex order-2 order-xxl-3">
 							<div class="card flex-fill w-100">
@@ -336,41 +369,8 @@
 							</div>
 						</div>
                  
-                    <!-- Pending Tickets -->
-                    <div class="row">
-                        <div class="col-xl-12 col-xxl-12 d-flex">
-                            <div class="card flex-fill w-100">
-                                <div class="card-header">
-                                    <h5 class="card-title">Pending Tickets</h5>
-                                </div>
-                                <div class="card-body">
-                                    <table class="table table-hover my-0">
-                                        <thead>
-                                            <tr>
-                                                <th>Ticket Name</th>
-                                                <th class="d-none d-xl-table-cell">Ticket Id</th>
-                                                <th>Severity</th>
-                                                <th class="d-none d-md-table-cell">Remarks </th>
-                                                <th class="d-none d-md-table-cell">Assigned By</th>
-                                                
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <% for (TicketsModel ticket : toShow) { %>
-                                                <tr>
-                                                    <td><%= ticket.getTicketName() %></td>
-                                                    <td class="d-none d-xl-table-cell"><%= ticket.getId() %></td>
-                                                    <td><span class="badge bg-danger"><%= ticket.getSeverity() %></span></td>
-                                                    <td class="d-none d-md-table-cell"><%= ticket.getRemark() %></td>
-                                                    <td class="d-none d-md-table-cell"><%= ticket.getCreatedBy() %></td>
-                                                </tr>
-                                            <% } %>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    
+                   
                 </div>
                 </div>
                 <!-- <form action="createTicketForm" method="get">
@@ -385,15 +385,6 @@
     <script src="./assets/js/app.js"></script>
     <script src="./assets/js/dashboard.js"></script>
     <script>
-    $(document).ready(function() {
-        // Set the value of the dropdown to 'global'
-      //  $('#plant').val('global');
-
-        // Trigger the change event manually
-      //  $('#plant').trigger('change');
-    });
-    
-   
     
 		document.addEventListener("DOMContentLoaded", function() {
 			// Pie chart

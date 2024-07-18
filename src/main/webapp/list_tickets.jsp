@@ -225,19 +225,12 @@
                     <!-- Page Header -->
                     <div class="row mb-3">
                         <div class="col-12">
-                            <div class="card">
+                            
                                 <h4 class="page-heading">Default Ticket Categories</h4>
-                            </div>
+                            
                         </div>
                     </div>
-                    <div class="pagination">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item" id="firstPage"><a class="page-link" href="#">First</a></li>
-                            <li class="page-item" id="prevPage"><a class="page-link" href="#">Previous</a></li>
-                            <li class="page-item" id="nextPage"><a class="page-link" href="#">Next</a></li>
-                            <li class="page-item" id="lastPage"><a class="page-link" href="#">Last</a></li>
-                        </ul>
-                    </div>
+                    
                     <!-- Ticket Sections -->
                     <div class="table-responsive">
                         <table class="table table-bordered" id="ticketsTable">
@@ -259,6 +252,14 @@
                                 <!-- Content will be dynamically loaded here -->
                             </tbody>
                         </table>
+                    </div>
+                    <div class="pagination">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" id="firstPage"><a class="page-link" href="#">First</a></li>
+                            <li class="page-item" id="prevPage"><a class="page-link" href="#">Previous</a></li>
+                            <li class="page-item" id="nextPage"><a class="page-link" href="#">Next</a></li>
+                            <li class="page-item" id="lastPage"><a class="page-link" href="#">Last</a></li>
+                        </ul>
                     </div>
                 </div> 
             </main>

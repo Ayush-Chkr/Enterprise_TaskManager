@@ -1,69 +1,6 @@
-//package com.digicode.controller;
-//
-//import java.io.IOException;
-//import java.util.HashSet;
-//import java.util.Set;
-//
-//import javax.servlet.ServletException;
-//import javax.servlet.annotation.WebServlet;
-//import javax.servlet.http.HttpServlet;
-//import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpServletResponse;
-//
-//import com.digicode.model.TaskSubgroupModel;
-//import com.digicode.model.TasksGroupModel;
-//import com.digicode.model.TicketsModel;
-//
-//@WebServlet("/CreateGroupServlet")
-//public class CreateGroupServlet extends HttpServlet {
-//    private static final long serialVersionUID = 1L;
-//
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//        // Retrieve form data
-//        String groupName = request.getParameter("groupName");
-//        String subgroupName = request.getParameter("subgroupName");
-//        String ticketsInput = request.getParameter("tickets");
-//        String[] tickets = ticketsInput.split("\\r?\\n"); // Split by newline
-//        
-//        
-//        TasksGroupModel grp= new TasksGroupModel();
-//        grp.setGroupName(groupName);
-//        
-//        TaskSubgroupModel sub= new TaskSubgroupModel();
-//        sub.setSubgroupName(subgroupName);
-//        sub.setParentGroup(grp);
-//        
-//        grp.addSubgroup(sub);
-//        
-//         Set<TicketsModel> ticks = new HashSet<>();
-//         for (String ticketLine : tickets) {
-//        	    if (ticketLine != null && !ticketLine.trim().isEmpty()) {
-//        	        TicketsModel ticket = new TicketsModel();
-//        	        ticket.setTicketName(ticketLine.trim());
-//        	        ticket.setTaskSubgroup(sub);
-//        	        ticks.add(ticket);
-//        	    }
-//        }
-//        sub.setTickets(ticks);
-//        
-//        
-//        //Testing
-//        System.out.println("Group: " + groupName);
-//        System.out.println("SubGroup: " + subgroupName);
-//        for (String ticket : tickets) {
-//            
-//            System.out.println("Ticket: " + ticket);
-//        }
-//
-//        
-//    }
-//}
 package com.digicode.controller;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -98,7 +35,7 @@ public class CreateGroupServlet extends HttpServlet {
             sessionFactory.close();
         }
     }
-    String subgrp= "New";
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Session session = null;
@@ -108,15 +45,14 @@ public class CreateGroupServlet extends HttpServlet {
             // Retrieve form data
             String groupName = request.getParameter("groupName");
             String subgroupName = request.getParameter("subgroupName");
-            String ticketsInput = request.getParameter("tickets");
-            String[] tickets = ticketsInput.split("[,\\s\\r?\\n]+"); // Split by newline
+            String ticketName = request.getParameter("tickets");
+            String ticketDescription = request.getParameter("description");
             
             // Testing
             System.out.println("Group: " + groupName);
             System.out.println("SubGroup: " + subgroupName);
-            for (String ticket : tickets) {
-                System.out.println("Ticket: " + ticket);
-            }
+            System.out.println("Ticket: " + ticketName);
+            System.out.println("Description: " + ticketDescription);
 
             // Initialize Hibernate session and transaction
             session = sessionFactory.openSession();
@@ -128,48 +64,39 @@ public class CreateGroupServlet extends HttpServlet {
             // Check if subgroup exists under the retrieved group or independently
             TaskSubgroupModel subgroup = fetchOrCreateSubgroup(session, group, subgroupName);
             
-            Set<String> existingTickets= new HashSet<>();
-            for(TicketsModel ticket : subgroup.getTickets()) {
-            	existingTickets.add(ticket.getTicketName().toLowerCase());
-            }
-            // Create and add tickets to the subgroup
-            Set<TicketsModel> ticks = new HashSet<>();
-            for (String ticketLine : tickets) {
-                if (ticketLine != null && !ticketLine.trim().isEmpty() && !existingTickets.contains(ticketLine.toLowerCase())) {
-                    TicketsModel ticket = new TicketsModel();
-                    ticket.setTicketName(ticketLine.trim());
-                    ticket.setTaskSubgroup(subgroup);
-                    if(subgrp.equals("New")) {
-                    	ticks.add(ticket);
-                    }else {
-                    	subgroup.addTicket(ticket);
-                    }
-                }else if (existingTickets.contains(ticketLine.toLowerCase())) {
-                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    response.getWriter().write("Ticket '" + ticketLine + "' already exists in the subgroup.");
-                    
-                }
-            }
+            // Check if ticket already exists in the subgroup
+            boolean ticketExists = (Long) session.createQuery(
+                "SELECT COUNT(*) FROM TicketsModel WHERE ticketName = :ticketName AND taskSubgroup = :subgroup")
+                .setParameter("ticketName", ticketName)
+                .setParameter("subgroup", subgroup)
+                .uniqueResult() > 0;
             
-            if(subgrp.equals("New")) {
-            	subgroup.setTickets(ticks);
-            }
-            
+            if (ticketExists) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("Ticket '" + ticketName + "' already exists in the subgroup.");
+            } else {
+                // Create and add ticket to the subgroup
+                TicketsModel ticket = new TicketsModel();
+                ticket.setTicketName(ticketName.trim());
+                ticket.setTicketDescription(ticketDescription.trim());
+                ticket.setTaskSubgroup(subgroup);
+                
+                subgroup.addTicket(ticket);
+                session.saveOrUpdate(subgroup);
 
-            // Save or update subgroup and tickets
-            session.saveOrUpdate(subgroup);
+                // Commit the transaction
+                transaction.commit();
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().write("Ticket added successfully.");
+            }
             
-            
-            // Commit the transaction
-            transaction.commit();
-            System.out.println("YO!");
-           
-
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
             e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("An error occurred while adding the ticket.");
         } finally {
             if (session != null) {
                 session.close();
@@ -203,11 +130,8 @@ public class CreateGroupServlet extends HttpServlet {
             subgroup.setSubgroupName(subgroupName);
             subgroup.setParentGroup(group);
             session.save(subgroup);
-        } else {
-        	subgrp= "Existing";
         }
 
         return subgroup;
     }
-
 }

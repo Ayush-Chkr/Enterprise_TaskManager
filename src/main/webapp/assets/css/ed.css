@@ -117,9 +117,14 @@
     }
 
     .card:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transform: scale(1.02);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+    /* Override hover effect for cards with the no-hover class */
+	.card.no-hover:hover {
+	    transform: none; /* or use a value you prefer */
+	    box-shadow: none; /* or use a value you prefer */
+	}
 
     .card-body {
         cursor: pointer;

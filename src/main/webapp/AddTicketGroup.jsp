@@ -163,9 +163,12 @@
 
                                         <div class="form-group">
                                             <label for="tickets">Tickets</label>
-                                            <textarea class="form-control" name="tickets" id="tickets" rows="4" placeholder="Enter tickets: one per line or separated by comma(,) or empty space... " required></textarea>
+                                            <input class="form-control" name="tickets" id="tickets"  placeholder="Enter ticket name... " required></input>
                                         </div>
-
+										<div class="form-group">
+                                            <label for="description">Description</label>
+                                            <input class="form-control" name="description" id="description"  placeholder="Enter ticket description " required></input>
+                                        </div>
                                         <div class="form-group text-right">
                                             <button type="submit" class="btn btn-primary" id="submitForm">Create</button>
                                         </div>

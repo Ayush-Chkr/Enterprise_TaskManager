@@ -119,10 +119,7 @@
                                             </select>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="ticketDescription">Ticket Description</label>
-                                            <textarea class="form-control" name="ticketDescription" id="ticketDescription" rows="4" placeholder="Enter ticket description..." required></textarea>
-                                        </div>
+                                        
 
                                         <div class="form-group">
                                             <label for="dueDate">Due Date</label>
@@ -132,9 +129,9 @@
                                         <div class="form-group">
                                             <label for="severity">Severity</label>
                                             <select class="form-control" name="severity" id="severity" required>
-                                                <option value="Sev1">High</option>
-                                                <option value="Sev2">Medium</option>
-                                                <option value="Sev3">Low</option>
+                                                <option value="High">High</option>
+                                                <option value="Medium">Medium</option>
+                                                <option value="Low">Low</option>
                                             </select>
                                         </div>
 
@@ -230,9 +227,9 @@ $(document).ready(function() {
             });
 
             // Handle ticket selection
-            ticketDropdown.change(function() {
+            /* ticketDropdown.change(function() {
                 $('#ticketDescription').val('');
-            });
+            }); */
         },
         error: function(xhr, status, error) {
             console.error('Error fetching data: ' + error);
@@ -267,7 +264,7 @@ $(document).ready(function() {
                 groupName: $('#group-input').val(),
                 subgroupName: $('#subgroup-input').val(),
                 ticketName: $('#ticket-dropdown').val(),
-                ticketDescription: $('#ticketDescription').val(),
+                
                 dueDate: $('#dueDate').val(),
                 severity: $('#severity').val(),
                 assignedTo: $('#employee-dropdown').val()
@@ -277,7 +274,7 @@ $(document).ready(function() {
                 groupName: $('#group-dropdown').val(),
                 subgroupName: $('#subgroup-input').val(),
                 ticketName: $('#ticket-dropdown').val(),
-                ticketDescription: $('#ticketDescription').val(),
+                
                 dueDate: $('#dueDate').val(),
                 severity: $('#severity').val(),
                 assignedTo: $('#employee-dropdown').val()

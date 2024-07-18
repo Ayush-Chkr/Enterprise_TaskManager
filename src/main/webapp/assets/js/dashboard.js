@@ -17,7 +17,7 @@ $(document).ready(function() {
 
 
 	$('#plant').change(function() {
-		debugger;
+		
 
 		selectedPlant = $("#plant").val();
 		console.log('Selected Plant:', selectedPlant); // For testing in console
@@ -94,7 +94,6 @@ function fetchChartData() {
 		dataType: 'json',
 		success: function(response) {
 			dataset = response;
-			alert(response["Plant 1"])
 			plant1Data = response["Plant 1"];
 			plant2Data = response["Plant 2"];
 			plant3Data = response["Plant 3"];

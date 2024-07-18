@@ -48,7 +48,8 @@
         }
         
         if(isAdminOrSuperAdmin){
-        	org.hibernate.Query query = hibernateSession.createQuery("FROM TicketsModel WHERE created_by= 'super_admin'");
+        	org.hibernate.Query query = hibernateSession.createQuery("FROM TicketsModel WHERE created_by= :role");
+        	query.setParameter("role", position);
             assignedTickets = query.list();
         }
         else {
@@ -268,35 +269,35 @@ color:#72A0C1;
                                                 </tr>
                                             </thead>
                                            <tbody>
-    <% for (TicketsModel ticket : assignedTickets) { %>
-        <tr>
-            <td class="taskId textc" 
-                data-task-id="<%= ticket.getId() %>"
-                data-description="<%= ticket.getTicketDescription() %>"
-                data-severity="<%= ticket.getSeverity() %>"
-                data-remarks="<%= ticket.getRemark() %>"
-                data-assignee="<%= ticket.getAssignee() %>"
-                data-created-at="<%= new java.text.SimpleDateFormat("dd-MM-yyyy").format(ticket.getCreatedAt()) %>"
-                data-status="<%= ticket.getStatus() %>"
-                data-due-date="<%= ticket.getDueDate() != null ? new java.text.SimpleDateFormat("dd-MM-yyyy").format(ticket.getDueDate()) : "" %>"
-                data-completed-at="<%= ticket.getCompletedAt() != null ? new java.text.SimpleDateFormat("dd-MM-yyyy").format(ticket.getCompletedAt()) : "" %>"
-               
-                data-ticket-name="<%= ticket.getTicketName() %>"
-                data-created-by="<%= ticket.getCreatedBy() %>"
-                data-updated-by="<%= ticket.getUpdatedBy() %>"
-                data-updated-at="<%= ticket.getUpdatedAt() != null ? new java.text.SimpleDateFormat("dd-MM-yyyy").format(ticket.getUpdatedAt()) : "" %>"
-                data-manager="<%= ticket.getManager() %>">
-                <%= ticket.getId() %>
-            </td>
-            <td><%= ticket.getTicketDescription() %></td>
-            <td><%= ticket.getSeverity() %></td>
-            <td><%= ticket.getAssignee() %></td>
-            <td><%= new java.text.SimpleDateFormat("dd-MM-yyyy").format(ticket.getCreatedAt()) %></td>
-            <td><%= ticket.getStatus() %></td>
-            <td><%= ticket.getRemark() %></td>
-        </tr>
-    <% } %>
-</tbody>
+										    <% for (TicketsModel ticket : assignedTickets) { %>
+										        <tr>
+										            <td class="taskId textc" 
+										                data-task-id="<%= ticket.getId() %>"
+										                data-description="<%= ticket.getTicketDescription() %>"
+										                data-severity="<%= ticket.getSeverity() %>"
+										                data-remarks="<%= ticket.getRemark() %>"
+										                data-assignee="<%= ticket.getAssignee() %>"
+										                data-created-at="<%= new java.text.SimpleDateFormat("dd-MM-yyyy").format(ticket.getCreatedAt()) %>"
+										                data-status="<%= ticket.getStatus() %>"
+										                data-due-date="<%= ticket.getDueDate() != null ? new java.text.SimpleDateFormat("dd-MM-yyyy").format(ticket.getDueDate()) : "" %>"
+										                data-completed-at="<%= ticket.getCompletedAt() != null ? new java.text.SimpleDateFormat("dd-MM-yyyy").format(ticket.getCompletedAt()) : "" %>"
+										               
+										                data-ticket-name="<%= ticket.getTicketName() %>"
+										                data-created-by="<%= ticket.getCreatedBy() %>"
+										                data-updated-by="<%= ticket.getUpdatedBy() %>"
+										                data-updated-at="<%= ticket.getUpdatedAt() != null ? new java.text.SimpleDateFormat("dd-MM-yyyy").format(ticket.getUpdatedAt()) : "" %>"
+										                data-manager="<%= ticket.getManager() %>">
+										                <%= ticket.getId() %>
+										            </td>
+										            <td><%= ticket.getTicketDescription() %></td>
+										            <td><%= ticket.getSeverity() %></td>
+										            <td><%= ticket.getAssignee() %></td>
+										            <td><%= new java.text.SimpleDateFormat("dd-MM-yyyy").format(ticket.getCreatedAt()) %></td>
+										            <td><%= ticket.getStatus() %></td>
+										            <td><%= ticket.getRemark() %></td>
+										        </tr>
+										    <% } %>
+										</tbody>
                                            
                                         </table>
                                     </div>
